@@ -3,9 +3,10 @@
 //  TestTaskThree
 
 import SwiftUI
+import Collections
 
 struct ContentView: View {
-    @State private var movies = [String]()
+    @State private var movies: OrderedSet<Movie> = []
     @State private var movieTitle: String = ""
     @State private var movieYear: Int?
     @State private var duplicate = false
@@ -30,17 +31,20 @@ struct ContentView: View {
             Button("Add") {
                 addNewMovie()
             }
-                .font(.title2)
-                .foregroundColor(.white)
-                .frame(width: 100, height: 50)
-                .background(Color.blue)
-                .cornerRadius(10)
+            .font(.title2)
+            .foregroundColor(.white)
+            .frame(width: 100, height: 50)
+            .background(Color.blue)
+            .cornerRadius(10)
+            .padding(.bottom)
             
-            List {
-                Section {
-                    ForEach(movies, id: \.self) {movie in
-                        Text(movie)
-                    }
+            ScrollView {
+                ForEach(movies, id: \.self) { movie in
+                    Text("\(movie.title) \(movie.year!)")
+                    Divider()
+                        .frame(width: 350, height: 1)
+                        .padding(0.1)
+                        .background(Color.gray)
                 }
             }
         }
@@ -51,11 +55,10 @@ struct ContentView: View {
     
     func addNewMovie() {
         guard movieTitle.count > 0 && movieYear != nil else { return }
-        let movie = "\(movieTitle) \(movieYear!)"
-        if movies.contains(movie) {
+        if movies.contains(Movie(title: movieTitle, year: movieYear)) {
             duplicate = true
         } else {
-            movies.insert(movie, at: 0)
+            movies.insert(Movie(title: movieTitle, year: movieYear), at: 0)
             duplicate = false
         }
     }
